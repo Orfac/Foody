@@ -1,4 +1,5 @@
 from typing import List, Any, Dict
+from bs4 import BeautifulSoup
 import requests
 
 
@@ -20,5 +21,5 @@ class ScraperTask:
         return ['https://eda.ru/recepty/osnovnye-blyuda/bigos-16752']
 
     def get_receipt(self, receipt_link: str):
-        a = self.session.get(receipt_link)
-        pass
+        receipt_page = self.session.get(receipt_link)
+        soup = BeautifulSoup(receipt_page.text, 'html.parser')
