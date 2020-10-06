@@ -1,8 +1,12 @@
-from typing import List
+from typing import List, Any, Dict
+import requests
 
 
 class ScraperTask:
-    def get_receipts(self):
+    def __init__(self):
+        self.session = requests.Session()
+
+    def get_receipts(self) -> Dict[str, Any]:
         receipts = {}
 
         for page_number in range(1, 2):
@@ -16,4 +20,5 @@ class ScraperTask:
         return ['https://eda.ru/recepty/osnovnye-blyuda/bigos-16752']
 
     def get_receipt(self, receipt_link: str):
+        a = self.session.get(receipt_link)
         pass
