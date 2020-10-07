@@ -16,7 +16,7 @@ class Receipt:
 class ScraperTask:
     def __init__(self):
         self.session = requests.Session()
-        self.receipt_page_scraper = ReceiptPageParserTask()
+        self.receipt_page_parser = ReceiptPageParserTask()
 
     def get_receipts(self) -> Dict[str, Receipt]:
         receipts = {}
@@ -35,8 +35,8 @@ class ScraperTask:
         receipt_page = self.session.get(receipt_link)
         soup = BeautifulSoup(receipt_page.text, 'html.parser')
 
-        receipt_title = self.receipt_page_scraper.get_receipt_title_from_soup(soup)
-        receipt_time = self.receipt_page_scraper.get_receipt_time_from_soup(soup)
-        receipt_n_persons = self.receipt_page_scraper.get_receipt_n_persons_from_soup(soup)
+        receipt_title = self.receipt_page_parser.get_receipt_title_from_soup(soup)
+        receipt_time = self.receipt_page_parser.get_receipt_time_from_soup(soup)
+        receipt_n_persons = self.receipt_page_parser.get_receipt_n_persons_from_soup(soup)
 
         return Receipt(title=receipt_title, time=receipt_time, n_persons=receipt_n_persons)
