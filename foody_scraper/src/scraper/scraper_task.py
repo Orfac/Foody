@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Any, Dict
+from typing import List, Dict, Optional
 from bs4 import BeautifulSoup
 import requests
 
@@ -8,7 +8,9 @@ from .receipt_parser_task import ReceiptPageParserTask
 
 @dataclass
 class Receipt:
-    title: str
+    title: Optional[str]
+    time: Optional[str]
+    n_persons: Optional[int]
 
 
 class ScraperTask:
@@ -34,5 +36,7 @@ class ScraperTask:
         soup = BeautifulSoup(receipt_page.text, 'html.parser')
 
         receipt_title = self.receipt_page_scraper.get_receipt_title_from_soup(soup)
+        receipt_time = self.receipt_page_scraper.get_receipt_time_from_soup(soup)
+        receipt_n_persons = self.receipt_page_scraper.get_receipt_n_persons_from_soup(soup)
 
-        return Receipt(title=receipt_title)
+        return Receipt(title=receipt_title, time=receipt_time, n_persons=receipt_n_persons)
