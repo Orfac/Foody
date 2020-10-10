@@ -37,6 +37,18 @@ class ReceiptPageParser:
 
         return ingredients
 
+    def get_tags_from_soup(self, page_soup: BeautifulSoup):
+        raw_tag_list = page_soup.findAll('ul', 'breadcrumbs')
+        if not raw_tag_list:
+            return None
+
+        raw_tags = raw_tag_list[0].find_all('a', '')
+        tags = []
+        for raw_tag in raw_tags:
+            tags.append(raw_tag.text)
+
+        return tags
+
     @staticmethod
     def __get_important_from_info_pad(page_soup:  BeautifulSoup, element_position: int) -> Optional[Any]:
         raw_info_pad = page_soup.findAll('div', 'recipe__info-pad info-pad print-invisible')
@@ -45,4 +57,3 @@ class ReceiptPageParser:
 
         raw_data = raw_info_pad[0].find_all('span', 'info-text')
         return raw_data[element_position].text.strip() if raw_data else None
-

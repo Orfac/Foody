@@ -10,3 +10,4 @@ class Receipt:
     time: Optional[str]
     n_persons: Optional[int]
     ingredients: List[Ingredient]
+    tags: List[str]
