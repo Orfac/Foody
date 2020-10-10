@@ -1,16 +1,11 @@
-from dataclasses import dataclass
-from typing import List, Dict, Optional
-from bs4 import BeautifulSoup
+
+from typing import List, Dict
+
 import requests
+from bs4 import BeautifulSoup
 
+from foody_scraper.src.data.receipt import Receipt
 from .receipt_parser_task import ReceiptPageParserTask
-
-
-@dataclass
-class Receipt:
-    title: Optional[str]
-    time: Optional[str]
-    n_persons: Optional[int]
 
 
 class ScraperTask:
@@ -38,5 +33,6 @@ class ScraperTask:
         receipt_title = self.receipt_page_parser.get_receipt_title_from_soup(soup)
         receipt_time = self.receipt_page_parser.get_receipt_time_from_soup(soup)
         receipt_n_persons = self.receipt_page_parser.get_receipt_n_persons_from_soup(soup)
+        ingredients = self.receipt_page_parser.get_ingredients_from_soup(soup)
 
-        return Receipt(title=receipt_title, time=receipt_time, n_persons=receipt_n_persons)
+        return Receipt(title=receipt_title, time=receipt_time, n_persons=receipt_n_persons, ingredients=ingredients)
