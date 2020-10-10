@@ -5,13 +5,13 @@ import requests
 from bs4 import BeautifulSoup
 
 from foody_scraper.src.data.receipt import Receipt
-from .receipt_parser_task import ReceiptPageParserTask
+from .receipt_parser import ReceiptPageParser
 
 
-class ScraperTask:
+class Scraper:
     def __init__(self):
         self.session = requests.Session()
-        self.receipt_page_parser = ReceiptPageParserTask()
+        self.receipt_page_parser = ReceiptPageParser()
 
     def get_receipts(self) -> Dict[str, Receipt]:
         receipts = {}

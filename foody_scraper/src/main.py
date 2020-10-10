@@ -1,8 +1,8 @@
-from foody_scraper.src.scraper.scraper_task import ScraperTask
+from foody_scraper.src.scraper.scraper import Scraper
 
 
 def main():
-    scraper_task = ScraperTask()
+    scraper_task = Scraper()
     scraper_task.get_receipts()
 
 

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from foody_scraper.src.data.ingredient import IngredientConverter
 
 
-class ReceiptPageParserTask:
+class ReceiptPageParser:
     def __init__(self):
         self.ingredient_converter = IngredientConverter()
 
