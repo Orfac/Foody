@@ -5,13 +5,15 @@ import requests
 from bs4 import BeautifulSoup
 
 from foody_scraper.src.data.receipt import Receipt
+from .receipt_link_parser import ReceiptLinkParser
 from .receipt_parser import ReceiptPageParser
-
+from foody_scraper.src.scraper.api_constants import *
 
 class Scraper:
     def __init__(self):
         self.session = requests.Session()
         self.receipt_page_parser = ReceiptPageParser()
+        self.links_page_parser = ReceiptLinkParser()
 
     def get_receipts(self) -> Dict[str, Receipt]:
         receipts = {}
@@ -24,7 +26,10 @@ class Scraper:
         return receipts
 
     def get_receipt_links(self, page_number: int) -> List[str]:
-        return ['https://eda.ru/recepty/osnovnye-blyuda/bigos-16752']
+        links_page_url = EDA_URL + "/recepty?page=" + str(page_number)
+        links_page = self.session.get(links_page_url)
+        soup = BeautifulSoup(links_page.text, 'html.parser')
+        return self.links_page_parser.get_links(soup)
 
     def get_receipt(self, receipt_link: str) -> Receipt:
         receipt_page = self.session.get(receipt_link)
