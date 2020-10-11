@@ -1,14 +1,18 @@
 import json
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 from bs4 import BeautifulSoup
 
 from foody_scraper.src.data.ingredient import IngredientConverter
+from foody_scraper.src.data.measure import Measure
+from foody_scraper.src.data.nutrition import Nutrition
+from foody_scraper.src.data_analysis.language_analyser import LanguageAnalyser
 
 
 class ReceiptPageParser:
     def __init__(self):
         self.ingredient_converter = IngredientConverter()
+        self.language_analyser = LanguageAnalyser()
 
     def get_receipt_title_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
         raw_title = page_soup.findAll('h1', 'recipe__name g-h1')
@@ -37,10 +41,10 @@ class ReceiptPageParser:
 
         return ingredients
 
-    def get_tags_from_soup(self, page_soup: BeautifulSoup):
+    def get_tags_from_soup(self, page_soup: BeautifulSoup) -> List[str]:
         raw_tag_list = page_soup.findAll('ul', 'breadcrumbs')
         if not raw_tag_list:
-            return None
+            return []
 
         raw_tags = raw_tag_list[0].find_all('a', '')
         tags = []
@@ -48,6 +52,31 @@ class ReceiptPageParser:
             tags.append(raw_tag.text)
 
         return tags
+
+    def get_nutrition_list_from_soup(self, page_soup: BeautifulSoup) -> List[Nutrition]:
+        raw_nutrition_list = page_soup.findAll('ul', 'nutrition__list')
+        if not raw_nutrition_list:
+            return []
+
+        raw_nutritions = raw_nutrition_list[0].findAll('li', '')
+        if not raw_nutritions:
+            return []
+
+        nutritions = []
+        for raw_nutrition in raw_nutritions:
+            splitted_nutrition = raw_nutrition.text.strip().split('\n')
+            if len(splitted_nutrition) > 0:
+                nutritions.append(
+                    Nutrition(
+                        name=splitted_nutrition[0],
+                        measure=Measure(
+                            title=splitted_nutrition[2],
+                            normal_title_form=self.language_analyser.get_normal_form(splitted_nutrition[2]),
+                            amount=float(splitted_nutrition[1].replace(',', '.')))
+                    )
+                )
+
+        return nutritions
 
     @staticmethod
     def __get_important_from_info_pad(page_soup:  BeautifulSoup, element_position: int) -> Optional[Any]:

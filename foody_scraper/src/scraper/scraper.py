@@ -35,11 +35,13 @@ class Scraper:
         receipt_n_persons = self.receipt_page_parser.get_receipt_n_persons_from_soup(soup)
         ingredients = self.receipt_page_parser.get_ingredients_from_soup(soup)
         tags = self.receipt_page_parser.get_tags_from_soup(soup)
+        nutritions = self.receipt_page_parser.get_nutrition_list_from_soup(soup)
 
         return Receipt(
             title=receipt_title,
             time=receipt_time,
             n_persons=receipt_n_persons,
             ingredients=ingredients,
-            tags=tags
+            tags=tags,
+            nutritions=nutritions
         )
