@@ -78,6 +78,21 @@ class ReceiptPageParser:
 
         return nutritions
 
+    def get_recipe_steps(self, page_soup: BeautifulSoup) -> List[str]:
+        raw_recipe_steps = page_soup.findAll('ul', 'recipe__steps')
+
+        if not raw_recipe_steps:
+            return []
+
+        raw_instruction_descriptions = page_soup.findAll('span', 'instruction__description')
+        if not raw_instruction_descriptions:
+            return []
+
+        recipe_steps = [recipe_step.text.strip() for recipe_step in raw_instruction_descriptions if recipe_step is not None]
+
+        return recipe_steps
+
+
     @staticmethod
     def __get_important_from_info_pad(page_soup:  BeautifulSoup, element_position: int) -> Optional[Any]:
         raw_info_pad = page_soup.findAll('div', 'recipe__info-pad info-pad print-invisible')

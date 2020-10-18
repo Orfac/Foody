@@ -4,10 +4,11 @@ from typing import List, Dict
 import requests
 from bs4 import BeautifulSoup
 
-from foody_scraper.src.data.receipt import Receipt
+from foody_scraper.src.data.recipe import Receipt, Recipe
+from foody_scraper.src.scraper.api_constants import *
 from .receipt_link_parser import ReceiptLinkParser
 from .receipt_parser import ReceiptPageParser
-from foody_scraper.src.scraper.api_constants import *
+
 
 class Scraper:
     def __init__(self):
@@ -41,12 +42,14 @@ class Scraper:
         ingredients = self.receipt_page_parser.get_ingredients_from_soup(soup)
         tags = self.receipt_page_parser.get_tags_from_soup(soup)
         nutritions = self.receipt_page_parser.get_nutrition_list_from_soup(soup)
+        recipe_steps = self.receipt_page_parser.get_recipe_steps(soup)
 
-        return Receipt(
+        return Recipe(
             title=receipt_title,
             time=receipt_time,
             n_persons=receipt_n_persons,
             ingredients=ingredients,
             tags=tags,
-            nutritions=nutritions
+            nutritions=nutritions,
+            recipe_steps=recipe_steps
         )
