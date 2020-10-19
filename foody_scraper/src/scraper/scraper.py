@@ -4,7 +4,7 @@ from typing import List, Dict
 import requests
 from bs4 import BeautifulSoup
 
-from foody_scraper.src.data.recipe import Receipt, Recipe
+from foody_scraper.src.data.recipe import  Recipe
 from foody_scraper.src.scraper.api_constants import *
 from .receipt_link_parser import ReceiptLinkParser
 from .receipt_parser import ReceiptPageParser
@@ -16,7 +16,7 @@ class Scraper:
         self.receipt_page_parser = ReceiptPageParser()
         self.links_page_parser = ReceiptLinkParser()
 
-    def get_receipts(self) -> Dict[str, Receipt]:
+    def get_receipts(self) -> Dict[str, Recipe]:
         receipts = {}
 
         for page_number in range(1, 2):
@@ -32,7 +32,7 @@ class Scraper:
         soup = BeautifulSoup(links_page.text, 'html.parser')
         return self.links_page_parser.get_links(soup)
 
-    def get_receipt(self, receipt_link: str) -> Receipt:
+    def get_receipt(self, receipt_link: str) -> Recipe:
         receipt_page = self.session.get(receipt_link)
         soup = BeautifulSoup(receipt_page.text, 'html.parser')
 
