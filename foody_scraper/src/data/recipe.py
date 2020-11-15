@@ -8,7 +8,8 @@ from foody_scraper.src.data.nutrition import Nutrition
 
 @dataclass
 class Recipe:
-    receipt_link: str
+    link: str
+    image_link: str
     title: Optional[str]
     time: Optional[str]
     n_persons: Optional[int]

@@ -8,12 +8,12 @@ from foody_scraper.src.data.recipe import Recipe
 from foody_scraper.src.database.mongo import Mongo
 from foody_scraper.src.scraper.api_constants import *
 from .receipt_link_parser import ReceiptLinkParser
-from .receipt_parser import ReceiptPageParser
+from .receipt_parser import RecipePageParser
 
 
 class Scraper:
     def __init__(self):
-        self.receipt_page_parser = ReceiptPageParser()
+        self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
 
@@ -68,19 +68,21 @@ class Scraper:
             response = await session.get(receipt_link)
             soup = BeautifulSoup(await response.text(), 'html.parser')
             await session.close()
-        receipt_title = self.receipt_page_parser.get_receipt_title_from_soup(soup)
-        receipt_time = self.receipt_page_parser.get_receipt_time_from_soup(soup)
-        receipt_n_persons = self.receipt_page_parser.get_receipt_n_persons_from_soup(soup)
-        ingredients = self.receipt_page_parser.get_ingredients_from_soup(soup)
-        tags = self.receipt_page_parser.get_tags_from_soup(soup)
-        nutritions = self.receipt_page_parser.get_nutrition_list_from_soup(soup)
-        recipe_steps = self.receipt_page_parser.get_recipe_steps(soup)
+        recipe_title = self.recipe_page_parser.get_recipe_title_from_soup(soup)
+        recipe_time = self.recipe_page_parser.get_recipe_time_from_soup(soup)
+        recipe_n_persons = self.recipe_page_parser.get_recipe_n_persons_from_soup(soup)
+        recipe_image_link = self.recipe_page_parser.get_recipe_image_link(soup)
+        ingredients = self.recipe_page_parser.get_ingredients_from_soup(soup)
+        tags = self.recipe_page_parser.get_tags_from_soup(soup)
+        nutritions = self.recipe_page_parser.get_nutrition_list_from_soup(soup)
+        recipe_steps = self.recipe_page_parser.get_recipe_steps(soup)
 
         return Recipe(
-            receipt_link=receipt_link,
-            title=receipt_title,
-            time=receipt_time,
-            n_persons=receipt_n_persons,
+            link=receipt_link,
+            image_link=recipe_image_link,
+            title=recipe_title,
+            time=recipe_time,
+            n_persons=recipe_n_persons,
             ingredients=ingredients,
             tags=tags,
             nutritions=nutritions,

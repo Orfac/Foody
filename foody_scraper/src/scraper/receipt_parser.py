@@ -9,21 +9,32 @@ from foody_scraper.src.data.nutrition import Nutrition
 from foody_scraper.src.data_analysis.language_analyser import LanguageAnalyser
 
 
-class ReceiptPageParser:
+class RecipePageParser:
     def __init__(self):
         self.ingredient_converter = IngredientConverter()
         self.language_analyser = LanguageAnalyser()
 
-    def get_receipt_title_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
+    def get_recipe_title_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
         raw_title = page_soup.findAll('h1', 'recipe__name g-h1')
 
         return raw_title[0].text.strip() if raw_title else ''
 
-    def get_receipt_time_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
+    def get_recipe_image_link(self, page_soup: BeautifulSoup):
+        raw_trigger_gallery = page_soup.findAll('div', 'photo-list-preview js-preview-item js-show-gallery trigger-gallery')
+        if not raw_trigger_gallery:
+            return None
+
+        images = raw_trigger_gallery[0].find_all('img')
+        if not images:
+            return None
+
+        return images[0]['src']
+
+    def get_recipe_time_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
         data = self.__get_important_from_info_pad(page_soup, 1)
         return data
 
-    def get_receipt_n_persons_from_soup(self, page_soup: BeautifulSoup) -> Optional[int]:
+    def get_recipe_n_persons_from_soup(self, page_soup: BeautifulSoup) -> Optional[int]:
         data = self.__get_important_from_info_pad(page_soup, 0)
 
         return int(data) if data else data
