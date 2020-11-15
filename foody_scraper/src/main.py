@@ -1,6 +1,7 @@
 from foody_scraper.src.scraper.scraper import Scraper
 import asyncio
 
+
 async def main():
     scraper_task = Scraper()
     receipts = await scraper_task.get_receipts()
