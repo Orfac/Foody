@@ -1,5 +1,8 @@
+import dataclasses
 from dataclasses import dataclass
 from typing import Optional, List
+
+from bson import ObjectId
 
 from foody_scraper.src.data.ingredient import Ingredient
 from foody_scraper.src.data.nutrition import Nutrition
@@ -14,3 +17,6 @@ class Recipe:
     tags: List[str]
     nutritions: List[Nutrition]
     recipe_steps: List[str]
+
+    def to_dict(self):
+        return dataclasses.asdict(self)
