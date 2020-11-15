@@ -1,5 +1,5 @@
 import asyncio
-from typing import Dict
+import random
 
 import aiohttp
 from bs4 import BeautifulSoup
@@ -16,11 +16,12 @@ class Scraper:
         self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
+        self.mongo.drop()
 
     async def get_receipts(self) -> None:
         is_end = []
         current_page = 1
-        page_offset = 4
+        page_offset = 10
 
         while not is_end:
             is_end = [result._result for result in (await asyncio.wait([
@@ -51,6 +52,7 @@ class Scraper:
         receipt_from_db: Recipe = self.mongo.find_by_link(receipt_link)
         if receipt_from_db:
             return True
+        await asyncio.sleep(random.randint(1, 6))
 
         self.mongo.save((await self.get_receipt(receipt_link)))
         return False
