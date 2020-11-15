@@ -26,6 +26,7 @@ nutrition = Nutrition(
     measure=measure
 )
 recipe = Recipe(
+    receipt_link='test_link',
     title=title,
     time="time",
     n_persons=1,

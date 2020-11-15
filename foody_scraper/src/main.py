@@ -1,12 +1,11 @@
-from foody_scraper.src.scraper.scraper import Scraper
 import asyncio
+
+from foody_scraper.src.scraper.scraper import Scraper
 
 
 async def main():
     scraper_task = Scraper()
-    receipts = await scraper_task.get_receipts()
-    for recipe in receipts:
-        print(receipts[recipe])
+    await scraper_task.get_receipts()
 
 
 if __name__ == '__main__':

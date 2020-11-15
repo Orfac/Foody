@@ -14,8 +14,7 @@ class ReceiptLinkParser:
     def get_links(self, page_soup: BeautifulSoup) -> List[str]:
         links = []
         receipt_blocks: ResultSet = page_soup.findAll('div', self.receipt_block_class)
-        for i in range(len(receipt_blocks)):
-            receipt_block = receipt_blocks[i]
+        for receipt_block in receipt_blocks:
             link_block = receipt_block.findAll('h3', self.link_block_class)[0]
             link = link_block.findAll('a')[0].attrs['href']
             links.append(EDA_URL + link)

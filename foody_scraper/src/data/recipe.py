@@ -2,14 +2,13 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Optional, List
 
-from bson import ObjectId
-
 from foody_scraper.src.data.ingredient import Ingredient
 from foody_scraper.src.data.nutrition import Nutrition
 
 
 @dataclass
 class Recipe:
+    receipt_link: str
     title: Optional[str]
     time: Optional[str]
     n_persons: Optional[int]

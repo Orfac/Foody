@@ -31,3 +31,8 @@ class Mongo:
         return self.recipes.find_one(
             {"title": title}
         )
+
+    def find_by_link(self, receipt_link) -> Recipe:
+        return self.recipes.find_one(
+            {"receipt_link": receipt_link}
+        )
