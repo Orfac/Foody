@@ -18,7 +18,8 @@ def analyze():
     print("analyze")
 
 with DAG('foody_parser',
-         default_args=default_args, 
+         default_args=default_args,
+         catchup=False,
          schedule_interval='0 * * * *',
          ) as dag:
 
