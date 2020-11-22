@@ -6,6 +6,7 @@ from foody_scraper.src.main import main
 
 default_args = {
     'owner': 'me',
+    'depends_on_past': False,
     'start_date': dt.datetime(2020, 11, 22),
     'max_active_runs': 1
 }
