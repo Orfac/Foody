@@ -17,6 +17,9 @@ class Scraper:
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
         #self.mongo.drop()
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 5.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36"
+        }
 
     async def get_receipts(self) -> None:
         is_end = []
@@ -60,14 +63,14 @@ class Scraper:
     async def get_receipt_links(self, page_number: int):
         links_page_url = EDA_URL + '/recepty?page=' + str(page_number)
         async with aiohttp.ClientSession() as session:
-            response = await session.get(links_page_url)
+            response = await session.get(links_page_url, headers=self.headers)
             soup = BeautifulSoup(await response.text(), 'html.parser')
             await session.close()
         return self.links_page_parser.get_links(soup)
 
     async def get_receipt(self, receipt_link: str) -> Recipe:
         async with aiohttp.ClientSession() as session:
-            response = await session.get(receipt_link)
+            response = await session.get(receipt_link, headers=self.headers)
             soup = BeautifulSoup(await response.text(), 'html.parser')
             await session.close()
         recipe_title = self.recipe_page_parser.get_recipe_title_from_soup(soup)
