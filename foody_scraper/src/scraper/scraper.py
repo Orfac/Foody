@@ -16,7 +16,7 @@ class Scraper:
         self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
-        self.mongo.drop()
+        #self.mongo.drop()
 
     async def get_receipts(self) -> None:
         is_end = []

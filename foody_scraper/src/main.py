@@ -1,6 +1,8 @@
 import asyncio
+import sys, os
 
 from foody_scraper.src.scraper.scraper import Scraper
+
 
 
 async def main():
