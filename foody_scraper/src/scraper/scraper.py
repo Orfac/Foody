@@ -16,7 +16,7 @@ class Scraper:
         self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
-        #self.mongo.drop()
+        self.mongo.drop()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 5.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36"
         }
@@ -82,10 +82,15 @@ class Scraper:
         nutritions = self.recipe_page_parser.get_nutrition_list_from_soup(soup)
         recipe_steps = self.recipe_page_parser.get_recipe_steps(soup)
 
+        for ingredient in ingredients:
+            if self.mongo.find_ingredient_by_id(ingredient.id) is None:
+                self.mongo.save_ingredient(ingredient)
+
         return Recipe(
             link=receipt_link,
             image_link=recipe_image_link,
             title=recipe_title,
+            good_combinations=[],
             time=recipe_time,
             n_persons=recipe_n_persons,
             ingredients=ingredients,

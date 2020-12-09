@@ -1,10 +1,11 @@
+import dataclasses
 from dataclasses import dataclass
 from typing import Dict, Any
 
 from foody_scraper.src.data.measure import Measure
-from foody_scraper.src.data.utils.functions import is_float
+from foody_scraper.src.utils.functions import is_float
 from foody_scraper.src.data_analysis.language_analyser import LanguageAnalyser
-from foody_scraper.src.data.utils.fractions_unicode_dict import fractions
+from foody_scraper.src.utils.fractions_unicode_dict import fractions
 
 
 @dataclass
@@ -12,6 +13,9 @@ class Ingredient:
     id: int
     name: str
     measure: Measure
+
+    def to_dict(self):
+        return dataclasses.asdict(self)
 
 
 class IngredientConverter:
