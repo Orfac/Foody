@@ -16,7 +16,7 @@ class Scraper:
         self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
-        self.mongo.drop()
+        # self.mongo.drop()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 5.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36"
         }
@@ -44,7 +44,7 @@ class Scraper:
         is_existed = [result._result for result in (await asyncio.wait([self.update_receipts(receipt_link)
                                                                         for receipt_link in receipt_links]))[0] if result._result]
 
-        if is_existed:
+        if len(is_existed) > 5:
             print('The record already exists in the database!\nThe process of scraping is interrupted!')
             return True
 
