@@ -1,11 +1,11 @@
-import random
 from typing import List
-import pandas as pd
 
+import pandas as pd
 from apyori import apriori
 
 from foody_scraper.src.data.good_combination import GoodCombination
 from foody_scraper.src.data.recipe import Recipe
+from foody_scraper.src.database.ingredient_dao import IngredientDao
 from foody_scraper.src.database.mongo import Mongo
 from foody_scraper.src.utils.pandas_utils import pandas_iter
 
@@ -20,6 +20,7 @@ class AprioriAnalyser:
 
     def __init__(self):
         self.mongo = Mongo()
+        self.ingredientDao = IngredientDao()
         pass
 
     def prepare_ingredient_matrix(self, recipes: List[Recipe]) -> List[List[str]]:
@@ -55,8 +56,8 @@ class AprioriAnalyser:
             for recipe in recipes:
                 ingredients_id = {str(ingredient['id']) for ingredient in recipe['ingredients']}
                 if {left, right}.issubset(ingredients_id):
-                    ingredients = [self.mongo.find_ingredient_by_id(int(left)),
-                                   self.mongo.find_ingredient_by_id(int(right))]
+                    ingredients = [self.ingredientDao.find_by_id(int(left)),
+                                   self.ingredientDao.find_by_id(int(right))]
                     self.mongo.set_good_combinations_for_recipe(
                         recipe,
                         GoodCombination(id=GoodCombination.generate_id(ingredients),

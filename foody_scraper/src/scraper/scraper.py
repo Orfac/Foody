@@ -5,6 +5,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 
 from foody_scraper.src.data.recipe import Recipe
+from foody_scraper.src.database.ingredient_dao import IngredientDao
 from foody_scraper.src.database.mongo import Mongo
 from foody_scraper.src.scraper.api_constants import *
 from .receipt_link_parser import ReceiptLinkParser
@@ -16,6 +17,8 @@ class Scraper:
         self.recipe_page_parser = RecipePageParser()
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
+        self.ingredientDao = IngredientDao()
+        # self.ingredientDao.drop()
         # self.mongo.drop()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 5.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36"
@@ -83,8 +86,8 @@ class Scraper:
         recipe_steps = self.recipe_page_parser.get_recipe_steps(soup)
 
         for ingredient in ingredients:
-            if self.mongo.find_ingredient_by_id(ingredient.id) is None:
-                self.mongo.save_ingredient(ingredient)
+            if self.ingredientDao.find_by_id(ingredient.id) is None:
+                self.ingredientDao.save(ingredient)
 
         return Recipe(
             link=receipt_link,
