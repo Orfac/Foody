@@ -3,7 +3,7 @@ from typing import Any, Optional, List
 
 from bs4 import BeautifulSoup
 
-from foody_scraper.src.data.ingredient import IngredientConverter
+from foody_scraper.src.data.ingredient_measure import IngredientMeasureConverter
 from foody_scraper.src.data.measure import Measure
 from foody_scraper.src.data.nutrition import Nutrition
 from foody_scraper.src.data_analysis.language_analyser import LanguageAnalyser
@@ -11,7 +11,7 @@ from foody_scraper.src.data_analysis.language_analyser import LanguageAnalyser
 
 class RecipePageParser:
     def __init__(self):
-        self.ingredient_converter = IngredientConverter()
+        self.ingredient_measure_converter = IngredientMeasureConverter()
         self.language_analyser = LanguageAnalyser()
 
     def get_recipe_title_from_soup(self, page_soup: BeautifulSoup) -> Optional[str]:
@@ -39,7 +39,7 @@ class RecipePageParser:
 
         return int(data) if data else data
 
-    def get_ingredients_from_soup(self, page_soup: BeautifulSoup):
+    def get_ingredient_measure_pairs_from_soup(self, page_soup: BeautifulSoup):
         raw_ingredients_list = page_soup.findAll('div', 'ingredients-list__content')
         if not raw_ingredients_list:
             return None
@@ -48,7 +48,8 @@ class RecipePageParser:
 
         for raw_ingredient in raw_ingredients:
             ingredient = json.loads(raw_ingredient['data-ingredient-object'])
-            ingredients.append(self.ingredient_converter.get_from_dict(ingredient))
+            ingredient['name'] = ingredient['name'].lower()
+            ingredients.append(self.ingredient_measure_converter.get_from_dict(ingredient))
 
         return ingredients
 

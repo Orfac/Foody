@@ -18,8 +18,8 @@ class Scraper:
         self.links_page_parser = ReceiptLinkParser()
         self.mongo = Mongo()
         self.ingredientDao = IngredientDao()
-        # self.ingredientDao.drop()
-        # self.mongo.drop()
+        self.ingredientDao.drop()
+        self.mongo.drop()
         self.headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 5.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.65 Safari/537.36"
         }
@@ -44,10 +44,10 @@ class Scraper:
             print(f'The last page is {page_number - 1}')
             return True
 
-        is_existed = [result._result for result in (await asyncio.wait([self.update_receipts(receipt_link)
-                                                                        for receipt_link in receipt_links]))[0] if result._result]
+        is_existed_total_result = (await asyncio.wait([self.update_receipts(receipt_link) for receipt_link in receipt_links]))[0]
+        is_existed = [result._result for result in is_existed_total_result if result._result]
 
-        if len(is_existed) > 5:
+        if len(is_existed) > (len(is_existed_total_result) // 2 + 2):
             print('The record already exists in the database!\nThe process of scraping is interrupted!')
             return True
 
@@ -80,7 +80,8 @@ class Scraper:
         recipe_time = self.recipe_page_parser.get_recipe_time_from_soup(soup)
         recipe_n_persons = self.recipe_page_parser.get_recipe_n_persons_from_soup(soup)
         recipe_image_link = self.recipe_page_parser.get_recipe_image_link(soup)
-        ingredients = self.recipe_page_parser.get_ingredients_from_soup(soup)
+        ingredient_measure_pairs = self.recipe_page_parser.get_ingredient_measure_pairs_from_soup(soup)
+        ingredients = [pair.ingredient for pair in ingredient_measure_pairs]
         tags = self.recipe_page_parser.get_tags_from_soup(soup)
         nutritions = self.recipe_page_parser.get_nutrition_list_from_soup(soup)
         recipe_steps = self.recipe_page_parser.get_recipe_steps(soup)
@@ -96,7 +97,7 @@ class Scraper:
             good_combinations=[],
             time=recipe_time,
             n_persons=recipe_n_persons,
-            ingredients=ingredients,
+            ingredients=ingredient_measure_pairs,
             tags=tags,
             nutritions=nutritions,
             recipe_steps=recipe_steps

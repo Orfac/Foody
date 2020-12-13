@@ -32,7 +32,7 @@ class AprioriAnalyser:
 
             for i in range(0, self.MAX_INGREDIENTS):
                 if i < n_ingredients:
-                    ingredients_row.append(str(recipe['ingredients'][i]['id']))
+                    ingredients_row.append(str(recipe['ingredients'][i]['ingredient']['id']))
                 else:
                     ingredients_row.append('nan')
 
@@ -54,7 +54,8 @@ class AprioriAnalyser:
 
         for left, right, support, confidence, lift in pandas_iter(top_ingredients_rulers_df, ['Left Hand Side', 'Right Hand Side', 'Support', 'Confidence', 'Lift']):
             for recipe in recipes:
-                ingredients_id = {str(ingredient['id']) for ingredient in recipe['ingredients']}
+                ingredients = [ingredient_measure_pair['ingredient'] for ingredient_measure_pair in recipe['ingredients']]
+                ingredients_id = {str(ingredient['id']) for ingredient in ingredients}
                 if {left, right}.issubset(ingredients_id):
                     ingredients = [self.ingredientDao.find_by_id(int(left)),
                                    self.ingredientDao.find_by_id(int(right))]

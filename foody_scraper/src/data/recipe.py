@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import Optional, List
 
 from foody_scraper.src.data.good_combination import GoodCombination
-from foody_scraper.src.data.ingredient import Ingredient
+from foody_scraper.src.data.ingredient_measure import IngredientMeasure
 from foody_scraper.src.data.nutrition import Nutrition
 
 
@@ -14,7 +14,7 @@ class Recipe:
     title: Optional[str]
     time: Optional[str]
     n_persons: Optional[int]
-    ingredients: List[Ingredient]
+    ingredients: List[IngredientMeasure]
     good_combinations: List[GoodCombination]
     tags: List[str]
     nutritions: List[Nutrition]
