@@ -4,6 +4,7 @@ from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
 
+from foody_scraper.src.data.good_combination import GoodCombination
 from foody_scraper.src.data.ingredient import Ingredient
 from foody_scraper.src.data.recipe import Recipe
 
@@ -18,8 +19,13 @@ class Mongo:
     def save(self, recipe: Recipe):
         self.recipes.insert_one(recipe.to_dict())
 
-    def update_recipe(self, recipe: Recipe):
-        self.recipes.update_one(recipe.to_dict())
+    def set_good_combinations_for_recipe(self, recipe: Recipe, good_combination: GoodCombination):
+        good_combinations = self.find_by_title(recipe['title'])['good_combinations']
+        good_combinations.append(good_combination.to_dict())
+        self.recipes.update_one(
+            {'title': recipe['title']},
+            {'$set': {'good_combinations': good_combinations}}
+        )
 
     def save_all(self, recipes: [Recipe]):
         self.recipes.insert_many(

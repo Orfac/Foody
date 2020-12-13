@@ -55,13 +55,15 @@ class AprioriAnalyser:
             for recipe in recipes:
                 ingredients_id = {str(ingredient['id']) for ingredient in recipe['ingredients']}
                 if {left, right}.issubset(ingredients_id):
-                    recipe['good_combinations'].append(GoodCombination(
-                        id=random.randint(0, 100000),
-                        ingredients=[self.mongo.find_ingredient_by_id(int(left)), self.mongo.find_ingredient_by_id(int(right))],
-                        support=support,
-                        confidence=confidence,
-                        lift=lift))
-                    self.mongo.update_recipe(recipe)
+                    ingredients = [self.mongo.find_ingredient_by_id(int(left)),
+                                   self.mongo.find_ingredient_by_id(int(right))]
+                    self.mongo.set_good_combinations_for_recipe(
+                        recipe,
+                        GoodCombination(id=GoodCombination.generate_id(ingredients),
+                                        ingredients=ingredients,
+                                        support=support,
+                                        confidence=confidence,
+                                        lift=lift))
 
     @staticmethod
     def inspect(results):
