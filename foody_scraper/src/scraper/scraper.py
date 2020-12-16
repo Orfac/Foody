@@ -89,6 +89,11 @@ class Scraper:
         for ingredient in ingredients:
             if self.ingredientDao.find_by_id(ingredient.id) is None:
                 self.ingredientDao.save(ingredient)
+            else:
+                if len(ingredient.probability_measures) == 0:
+                    continue
+
+                self.ingredientDao.update_probability_measures(ingredient, ingredient.probability_measures[0])
 
         return Recipe(
             link=receipt_link,

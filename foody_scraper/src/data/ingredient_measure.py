@@ -23,7 +23,7 @@ class IngredientMeasureConverter:
         name = ingredient_dict['name']
         measure = self.parse_measure_from_string(ingredient_dict['amount'])
         return IngredientMeasure(
-            ingredient=Ingredient(id, name),
+            ingredient=Ingredient(id, name, [measure.title]),
             measure=measure
         )
 

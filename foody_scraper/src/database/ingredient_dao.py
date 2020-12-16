@@ -14,6 +14,14 @@ class IngredientDao:
     def save(self, ingredient: Ingredient):
         self.ingredients.insert_one(ingredient.to_dict())
 
+    def update_probability_measures(self, ingredient: Ingredient, new_probability_measure: str):
+        probability_measures = self.find_by_id(ingredient.id)['probability_measures']
+
+        probability_measures.append(new_probability_measure)
+        self.ingredients.update_one(
+            {'id': ingredient.id},
+            {'$set': {'probability_measures': list(set(probability_measures))}})
+
     def find_by_id(self, ingredient_id: int) -> Ingredient:
         return self.ingredients.find_one({"id": ingredient_id})
 
