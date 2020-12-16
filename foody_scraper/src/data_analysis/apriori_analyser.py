@@ -4,7 +4,9 @@ import pandas as pd
 from apyori import apriori
 
 from foody_scraper.src.data.good_combination import GoodCombination
+from foody_scraper.src.data.ingredient import Ingredient
 from foody_scraper.src.data.recipe import Recipe
+from foody_scraper.src.database.good_combination_dao import GoodCombinationDao
 from foody_scraper.src.database.ingredient_dao import IngredientDao
 from foody_scraper.src.database.mongo import Mongo
 from foody_scraper.src.utils.pandas_utils import pandas_iter
@@ -20,8 +22,9 @@ class AprioriAnalyser:
 
     def __init__(self):
         self.mongo = Mongo()
-        self.ingredientDao = IngredientDao()
-        pass
+        self.ingredient_dao = IngredientDao()
+        self.good_combination_dao = GoodCombinationDao()
+        # self.good_combination_dao.drop()
 
     def prepare_ingredient_matrix(self, recipes: List[Recipe]) -> List[List[str]]:
         ingredients_matrix = []
@@ -50,22 +53,26 @@ class AprioriAnalyser:
 
         ingredients_rulers_df = pd.DataFrame(self.inspect(ingredients_rulers),
                                           columns=['Left Hand Side', 'Right Hand Side', 'Support', 'Confidence', 'Lift'])
-        top_ingredients_rulers_df = ingredients_rulers_df.nlargest(n=2*len(ingredients_matrix), columns='Lift')
+        top_ingredients_rulers_df = ingredients_rulers_df.nlargest(n=len(ingredients_matrix), columns='Lift')
 
         for left, right, support, confidence, lift in pandas_iter(top_ingredients_rulers_df, ['Left Hand Side', 'Right Hand Side', 'Support', 'Confidence', 'Lift']):
             for recipe in recipes:
                 ingredients = [ingredient_measure_pair['ingredient'] for ingredient_measure_pair in recipe['ingredients']]
                 ingredients_id = {str(ingredient['id']) for ingredient in ingredients}
                 if {left, right}.issubset(ingredients_id):
-                    ingredients = [self.ingredientDao.find_by_id(int(left)),
-                                   self.ingredientDao.find_by_id(int(right))]
-                    self.mongo.set_good_combinations_for_recipe(
-                        recipe,
-                        GoodCombination(id=GoodCombination.generate_id(ingredients),
-                                        ingredients=ingredients,
-                                        support=support,
-                                        confidence=confidence,
-                                        lift=lift))
+                    left_ingredient = self.ingredient_dao.find_by_id(int(left))
+                    right_ingredient = self.ingredient_dao.find_by_id(int(right))
+
+                    ingredients = [Ingredient.convert_dict_to_ingredient(left_ingredient),
+                                   Ingredient.convert_dict_to_ingredient(right_ingredient)]
+
+                    good_combination = GoodCombination(id=f'{left_ingredient["_id"]}{right_ingredient["_id"]}',
+                                                       ingredients=ingredients, support=support,
+                                                       confidence=confidence, lift=lift)
+                    self.mongo.set_good_combinations_for_recipe(recipe, good_combination)
+
+                    if self.good_combination_dao.find_by_id(good_combination.id):
+                        self.good_combination_dao.save(good_combination)
 
     @staticmethod
     def inspect(results):

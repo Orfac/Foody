@@ -7,7 +7,7 @@ from foody_scraper.src.data.ingredient import Ingredient
 
 @dataclass
 class GoodCombination:
-    id: int
+    id: str
     ingredients: List[Ingredient]
     support: float
     confidence: float
@@ -17,8 +17,5 @@ class GoodCombination:
         return dataclasses.asdict(self)
 
     @staticmethod
-    def generate_id(ingredients: List[Ingredient]):
-        concatenated_titles = ' '.join([
-            ingredient.name if isinstance(ingredient, Ingredient) else ingredient['name'] for ingredient in ingredients
-        ])
-        return hash(concatenated_titles)
+    def get_unique_id(good_combinations_dict):
+        return str(good_combinations_dict['ingredients'][0]['_id']) + str(good_combinations_dict['ingredients'][1]['_id'])

@@ -17,13 +17,16 @@ class Mongo:
     def save(self, recipe: Recipe):
         self.recipes.insert_one(recipe.to_dict())
 
-    def set_good_combinations_for_recipe(self, recipe: Recipe, good_combination: GoodCombination):
+    def set_good_combinations_for_recipe(self, recipe: Recipe, new_good_combination: GoodCombination):
         good_combinations = self.find_by_title(recipe['title'])['good_combinations']
-        good_combinations.append(good_combination.to_dict())
-        self.recipes.update_one(
-            {'title': recipe['title']},
-            {'$set': {'good_combinations': good_combinations}}
-        )
+        good_combination_ids = [good_combination['id'] for good_combination in good_combinations]
+
+        if new_good_combination.id not in good_combination_ids:
+            good_combinations.append(new_good_combination.to_dict())
+            self.recipes.update_one(
+                {'title': recipe['title']},
+                {'$set': {'good_combinations': good_combinations}}
+            )
 
     def save_all(self, recipes: [Recipe]):
         self.recipes.insert_many(
