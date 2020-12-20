@@ -1,3 +1,5 @@
+from typing import List
+
 from pymongo import MongoClient
 from pymongo.collection import Collection
 from pymongo.database import Database
@@ -20,3 +22,6 @@ class GoodCombinationDao:
 
     def drop(self):
         self.db.good_combinations.drop()
+
+    def find_all(self) -> List[GoodCombination]:
+        return list(self.good_combinations.find({}))
