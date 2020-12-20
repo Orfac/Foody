@@ -71,7 +71,7 @@ class AprioriAnalyser:
                                                        confidence=confidence, lift=lift)
                     self.mongo.set_good_combinations_for_recipe(recipe, good_combination)
 
-                    if self.good_combination_dao.find_by_id(good_combination.id):
+                    if not (self.good_combination_dao.find_by_id(good_combination.id)):
                         self.good_combination_dao.save(good_combination)
 
     @staticmethod
