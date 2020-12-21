@@ -24,7 +24,7 @@ class AprioriAnalyser:
         self.mongo = Mongo()
         self.ingredient_dao = IngredientDao()
         self.good_combination_dao = GoodCombinationDao()
-        # self.good_combination_dao.drop()
+        self.good_combination_dao.drop()
 
     def prepare_ingredient_matrix(self, recipes: List[Recipe]) -> List[List[str]]:
         ingredients_matrix = []
@@ -43,8 +43,7 @@ class AprioriAnalyser:
 
         return ingredients_matrix
 
-    def execute_apriori(self):
-        recipes = self.mongo.find_all()
+    def execute_apriori(self, recipes):
         ingredients_matrix = self.prepare_ingredient_matrix(recipes)
 
         ingredients_rulers = list(apriori(transactions=ingredients_matrix, min_support=self.MIN_SUUPPORT,

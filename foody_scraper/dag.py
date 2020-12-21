@@ -4,6 +4,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator
 
 from foody_scraper.src.data_analysis.apriori_analyser import AprioriAnalyser
+from foody_scraper.src.database.mongo import Mongo
 from foody_scraper.src.main import main
 
 default_args = {
@@ -20,7 +21,7 @@ def parse():
 
 def analyze():
     analyzer = AprioriAnalyser()
-    analyzer.execute_apriori()
+    analyzer.execute_apriori(Mongo().find_all())
 
 
 with DAG('foody_parser',
